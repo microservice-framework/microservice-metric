@@ -60,6 +60,10 @@ function hookValidate(method, jsonData, requestDetails, callback) {
     return mservice.validate('POST', jsonData, requestDetails, callback);
   }
 
+  if (method == 'GET'){
+    return callback(null)
+  }
+
   return mservice.validate(method, jsonData, requestDetails, callback);
 }
 
