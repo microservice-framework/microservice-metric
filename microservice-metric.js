@@ -4,9 +4,7 @@ const framework = '@microservice-framework';
 const Cluster = require(framework + '/microservice-cluster');
 const Microservice = require(framework + '/microservice');
 const MicroserviceRouterRegister = require(framework + '/microservice-router-register').register;
-const clientViaRouter = require(framework + '/microservice-router-register').clientViaRouter;
 
-const Octokit = require('@octokit/rest')
 
 require('dotenv').config();
 
