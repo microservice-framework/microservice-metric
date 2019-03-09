@@ -117,8 +117,8 @@ function getMetrics(jsonData, requestDetails, callback) {
  */
 function processMetrics(message) {
   let metricName = 'unknown';
-  if (message.jsonData.headers['x-origin-url']) {
-    metricName = message.jsonData.headers['x-origin-url']
+  if (message.jsonData.route) {
+    metricName = message.jsonData.route
   }
   if (message.jsonData.headers['x-hook-type']) {
     metricName += ':' + message.jsonData.headers['x-hook-type']
