@@ -108,7 +108,7 @@ function hookInit(cluster, worker, address) {
  * SEARCH handler.
  */
 function getMetrics(jsonData, requestDetails, callback) {
-  callback(null, {code: 200, asnwer: metricStorage})
+  callback(null, {code: 200, answer: metricStorage})
 }
 
 
