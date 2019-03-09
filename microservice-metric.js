@@ -117,11 +117,11 @@ function getMetrics(jsonData, requestDetails, callback) {
  */
 function processMetrics(message) {
   let metricName = 'unknown';
-  if (message.headers['x-origin-url']) {
-    metricName = message.headers['x-origin-url']
+  if (message.jsonData.headers['x-origin-url']) {
+    metricName = message.jsonData.headers['x-origin-url']
   }
-  if (message.headers['x-hook-type']) {
-    metricName += ':' + message.headers['x-hook-type']
+  if (message.jsonData.headers['x-hook-type']) {
+    metricName += ':' + message.jsonData.headers['x-hook-type']
   }
   if (!metricStorage[metricName]) {
     metricStorage[metricName] = {
@@ -129,8 +129,8 @@ function processMetrics(message) {
     }
   }
   let metricMethod = 'unknown'
-  if (message.headers['x-origin-method']) {
-    metricMethod = message.headers['x-origin-method']
+  if (message.jsonData.headers['x-origin-method']) {
+    metricMethod = message.jsonData.headers['x-origin-method']
   }
   if (!metricStorage[metricName].methods[metricMethod]){
     metricStorage[metricName].methods[metricMethod] = {}
