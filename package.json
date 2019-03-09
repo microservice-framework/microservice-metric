@@ -5,7 +5,7 @@
   "main": "router-admin.js",
   "scripts": {
     "test": "node_modules/.bin/mocha --timeout 15000",
-    "start": "DEBUG=http:log,cluster:*,microservice-metric:log node  --max-old-space-size=120 microservice-metric.js",
+    "start": "DEBUG=http:log,cluster:log,cluster:worker,microservice-metric:log node  --max-old-space-size=120 microservice-metric.js",
     "stop": "node kill.js",
     "status": "node status.js",
     "cs": "eslint --fix *.js"

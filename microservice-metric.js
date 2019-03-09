@@ -120,6 +120,13 @@ function processMetrics(message) {
   if (message.jsonData.route) {
     metricName = message.jsonData.route
   }
+  for(let name in message.jsonData.headers) {
+    if (name.substr(0, 4) == 'mfw-') {
+      let pathname = name.substr(4)
+      let value = message.jsonData.headers[name]
+      metricName = metricName.replace(value, ':' + pathname);
+    }
+  }
   if (message.jsonData.headers['x-hook-type']) {
     metricName += ':' + message.jsonData.headers['x-hook-type']
   }
