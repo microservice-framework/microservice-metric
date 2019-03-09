@@ -159,5 +159,5 @@ function hookNOTIFY(jsonData, requestDetails, callback) {
     jsonData: jsonData 
   }
   process.send(JSON.stringify(message));
-  callback(null, {code: 200, asnwer: {message: 'received'}})
+  callback(null, {code: 200, answer: {message: 'received'}})
 }
