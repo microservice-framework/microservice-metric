@@ -1,0 +1,249 @@
+{
+  "id": "/MarketplaceJSON",
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "Marketplace action",
+      "enum": ["purchased", "cancelled", "pending_change", "pending_change_cancelled", "changed"],
+      "required": true
+    },
+    "effective_date": {
+      "type": "string",
+      "description": "String time of starting from",
+      "required": true
+    },
+    "sender": {
+      "type": "object",
+      "description": "Sender information.",
+      "required": true,
+      "properties": {
+        "login": {
+          "type": "string",
+          "description": "Sender login",
+          "required": true
+        },
+        "id": {
+          "type": "number",
+          "description": "Github account ID",
+          "required": true
+        },
+        "email": {
+          "type": "string",
+          "description": "Sender email",
+          "required": true
+        }
+      }
+    },
+    "marketplace_purchase": {
+      "type": "object",
+      "description": "Purchase details.",
+      "properties": {
+        "account": {
+          "type": "object",
+          "description": "Account details",
+          "properties": {
+            "login": {
+              "type": "string",
+              "description": "Sender login",
+              "required": true
+            },
+            "id": {
+              "type": "number",
+              "description": "Github account ID",
+              "required": true
+            },
+            "type": {
+              "type": "string",
+              "description": "Login type",
+              "enum": ["Organization", "User"],
+              "required": true
+            }
+          },
+          "required": true
+        },
+        "billing_cycle": {
+          "type": ["string", "null"],
+          "description": "Billing cycle.",
+          "enum": ["yearly", "monthly", null],
+          "required": true
+        },
+        "unit_count": {
+          "type": "number",
+          "description": "How many unit counts.",
+          "required": true
+        },
+        "on_free_trial": {
+          "type": "booolean",
+          "description": "Is it free trial.",
+          "required": true
+        },
+        "free_trial_ends_on": {
+          "type": ["string", "null"],
+          "description": "String time of trial end"
+        },
+        "next_billing_date": {
+          "type": ["string", "null"],
+          "description": "String time of next billing date"
+        },
+        "plan": {
+          "type": "object",
+          "description": "Account details",
+          "properties": {
+            "id": {
+              "type": "number",
+              "description": "Github plan ID",
+              "required": true
+            },
+            "name": {
+              "type": "string",
+              "description": "Plan name",
+              "required": true
+            },
+            "description": {
+              "type": "string",
+              "description": "Plan description",
+              "required": true
+            },
+            "monthly_price_in_cents": {
+              "type": "number",
+              "description": "monthly price in cents",
+              "required": true
+            },
+            "yearly_price_in_cents": {
+              "type": "number",
+              "description": "yearly price in cents",
+              "required": true
+            },
+            "price_model":{
+              "type": "string",
+              "description": "Plan price model",
+              "enum": ["flat-rate", "per-unit", "free"],
+              "required": true
+            },
+            "has_free_trial": {
+              "type": "booolean",
+              "description": "Is it have free trial.",
+              "required": true
+            },
+            "unit_name": {
+              "type": ["string", "null"],
+              "description": "Plan unit name",
+              "required": true
+            },
+            "bullets": {
+              "type": "array",
+              "description": "Promised bullets in array"
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "previous_marketplace_purchase": {
+      "type": "object",
+      "description": "Purchase details.",
+      "properties": {
+        "account": {
+          "type": "object",
+          "description": "Account details",
+          "properties": {
+            "login": {
+              "type": "string",
+              "description": "Sender login",
+              "required": true
+            },
+            "id": {
+              "type": "number",
+              "description": "Github account ID",
+              "required": true
+            },
+            "type": {
+              "type": "string",
+              "description": "Login type",
+              "enum": ["Organization", "User"],
+              "required": true
+            }
+          },
+          "required": true
+        },
+        "billing_cycle": {
+          "type": ["string", "null"],
+          "description": "Billing cycle.",
+          "enum": ["yearly", "monthly", null],
+          "required": true
+        },
+        "unit_count": {
+          "type": "number",
+          "description": "How many unit counts.",
+          "required": true
+        },
+        "on_free_trial": {
+          "type": "booolean",
+          "description": "Is it free trial.",
+          "required": true
+        },
+        "free_trial_ends_on": {
+          "type": ["string", "null"],
+          "description": "String time of trial end"
+        },
+        "next_billing_date": {
+          "type": ["string", "null"],
+          "description": "String time of next billing date"
+        },
+        "plan": {
+          "type": "object",
+          "description": "Account details",
+          "properties": {
+            "id": {
+              "type": "number",
+              "description": "Github plan ID",
+              "required": true
+            },
+            "name": {
+              "type": "string",
+              "description": "Plan name",
+              "required": true
+            },
+            "description": {
+              "type": "string",
+              "description": "Plan description",
+              "required": true
+            },
+            "monthly_price_in_cents": {
+              "type": "number",
+              "description": "monthly price in cents",
+              "required": true
+            },
+            "yearly_price_in_cents": {
+              "type": "number",
+              "description": "yearly price in cents",
+              "required": true
+            },
+            "price_model":{
+              "type": "string",
+              "description": "Plan price model",
+              "enum": ["flat-rate", "per-unit", "free"],
+              "required": true
+            },
+            "has_free_trial": {
+              "type": "booolean",
+              "description": "Is it have free trial.",
+              "required": true
+            },
+            "unit_name": {
+              "type": ["string", "null"],
+              "description": "Plan unit name",
+              "required": true
+            },
+            "bullets": {
+              "type": "array",
+              "description": "Promised bullets in array"
+            }
+          },
+          "required": true
+        }
+      }
+    }
+  }
+}

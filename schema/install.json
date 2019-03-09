@@ -1,0 +1,69 @@
+{
+  "properties": {
+    "hostname": {
+      "type": "string",
+      "description": "IP or hostname of the server",
+      "default": ""
+    },
+    "port": {
+      "type": "number",
+      "description": "Port",
+      "default": 10010,
+      "required": true
+    },
+    "workers": {
+      "type": "number",
+      "description": "Number of workers",
+      "default": 2,
+      "required": true
+    },
+    "self_path": {
+      "type": "string",
+      "description": "SELF PATH",
+      "default": "metrics",
+      "required": true
+    },
+    "self_url": {
+      "type": "string",
+      "description": "SELF URL",
+      "default": "http://localhost:10010/",
+      "required": true
+    },
+    "router_url": {
+      "type": "string",
+      "description": "ROUTER URL (no trailing /)",
+      "default": "http://localhost:3000",
+      "required": true
+    },
+    "router_proxy_url": {
+      "type": "string",
+      "description": "ROUTER PROXY URL (no trailing /)",
+      "default": "http://localhost:3100",
+      "required": true
+    },
+    "router_secret": {
+      "type": "string",
+      "description": "ROUTER SECRET. Take it from microservice-router settings.",
+      "default": "",
+      "required": true
+    },
+    "router_period": {
+      "type": "number",
+      "description": "How often report to router (ms)",
+      "default": 3000,
+      "required": true
+    },
+    "scope": {
+      "type": "string",
+      "description": "Scope",
+      "default": "metrics",
+      "required": true
+    },
+    "schema": {
+      "type": "string",
+      "description": "Do not change",
+      "default": "metric.json",
+      "required": true
+    }
+  }
+}
