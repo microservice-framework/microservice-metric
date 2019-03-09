@@ -129,8 +129,8 @@ function processMetrics(message) {
     }
   }
   let metricMethod = 'unknown'
-  if (message.jsonData.headers['x-origin-method']) {
-    metricMethod = message.jsonData.headers['x-origin-method']
+  if (message.jsonData.method) {
+    metricMethod = message.jsonData.method
   }
   if (!metricStorage[metricName].methods[metricMethod]){
     metricStorage[metricName].methods[metricMethod] = {}
