@@ -39,6 +39,7 @@ var mControlCluster = new Cluster({
   }
 });
 
+var metricStorage = {}
 
 /**
  * Validate handler.
@@ -82,6 +83,7 @@ function hookInit(cluster, worker, address) {
       },
       cluster: cluster
     });
+    // register this one on 1 min+ later to have one min stats for sure.
     var mserviceRegister = new MicroserviceRouterRegister({
       server: {
         url: process.env.ROUTER_URL,
@@ -104,7 +106,7 @@ function hookInit(cluster, worker, address) {
  * SEARCH handler.
  */
 function getMetrics(jsonData, requestDetails, callback) {
-  callback(null, {code: 200, asnwer: {message: 'test'}})
+  callback(null, {code: 200, asnwer: metricStorage})
 }
 
 
@@ -112,6 +114,32 @@ function getMetrics(jsonData, requestDetails, callback) {
  * Process Metrics.
  */
 function processMetrics(message) {
+  let metricName = 'unknown';
+  if (message.headers['x-origin-url']) {
+    metricName = message.headers['x-origin-url']
+  }
+  if (message.headers['x-hook-type']) {
+    metricName += ':' + message.headers['x-hook-type']
+  }
+  if (!metricStorage[metricName]) {
+    metricStorage[metricName] = {
+      methods: {},
+    }
+  }
+  let metricMethod = 'unknown'
+  if (message.headers['x-origin-method']) {
+    metricMethod = message.headers['x-origin-method']
+  }
+  if (!metricStorage[metricName].methods[metricMethod]){
+    metricStorage[metricName].methods[metricMethod] = {}
+  }
+
+  if (!metricStorage[metricName].methods[metricMethod][message.jsonData.code]) {
+    metricStorage[metricName].methods[metricMethod][message.jsonData.code] = 0
+  }
+
+  metricStorage[metricName].methods[metricMethod][message.jsonData.code]++
+
 }
 
 /**
@@ -129,5 +157,5 @@ function hookNOTIFY(jsonData, requestDetails, callback) {
     jsonData: jsonData 
   }
   process.send(JSON.stringify(message));
-
+  callback(null, {code: 200, asnwer: {message: 'received'}})
 }
