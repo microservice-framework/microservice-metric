@@ -1,25 +1,25 @@
 {
-  "name": "@microservice-framework/microservice-metric",
+  "name": "@microservice-framework/microservice-metrics",
   "version": "1.0.0",
   "description": "Microservice framework router",
   "main": "router-admin.js",
   "scripts": {
     "test": "node_modules/.bin/mocha --timeout 15000",
-    "start": "DEBUG=http:log,cluster:log,cluster:worker,microservice-metric:log node  --max-old-space-size=120 microservice-metric.js",
+    "start": "DEBUG=http:log,cluster:log,cluster:worker,microservice-metrics:log node  --max-old-space-size=120 microservice-metrics.js",
     "stop": "node kill.js",
     "status": "node status.js",
     "cs": "eslint --fix *.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/microservice-framework/microservice-metric.git"
+    "url": "git+https://github.com/microservice-framework/microservice-metrics.git"
   },
   "author": "Gormartsen",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/microservice-framework/microservice-metric/issues"
+    "url": "https://github.com/microservice-framework/microservice-metrics/issues"
   },
-  "homepage": "https://github.com/microservice-framework/microservice-metric#readme",
+  "homepage": "https://github.com/microservice-framework/microservice-metrics#readme",
   "dependencies": {
     "@microservice-framework/microservice": "^1.3.5",
     "@microservice-framework/microservice-client": "^1.3.0",

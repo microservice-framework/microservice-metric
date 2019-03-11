@@ -11,8 +11,8 @@ require('dotenv').config();
 const debugF = require('debug');
 
 var debug = {
-  log: debugF('microservice-metric:log'),
-  debug: debugF('microservice-metric:debug')
+  log: debugF('microservice-metrics:log'),
+  debug: debugF('microservice-metrics:debug')
 };
 
 
@@ -117,36 +117,7 @@ function hookInit(cluster, worker, address) {
  * SEARCH handler.
  */
 function getMetrics(jsonData, requestDetails, callback) {
-  if(requestDetails.url == 'prometheus') {
-    return callback(null, {code: 200, answer: prometheus_export(), headers: {'content-type': 'text/plain'}})
-  }
   callback(null, {code: 200, answer: metricStorage})
-}
-
-/**
- * SEARCH handler.
- */
-function prometheus_export(){
-  let metricName = 'mfwapi_requests_total'
-  let apiname = process.env.NAME
-  let answer = '#HELP ' + metricName + ' The total numbers of mfwapi requests' + "\n"
-  answer += '#TYPE ' + metricName + ' counter' + "\n"
-  for(let name in metricStorage) {
-    for(let method in metricStorage[name].methods) {
-      for(let code in metricStorage[name].methods[method]) {
-        let count = metricStorage[name].methods[method][code]
-        let statLine = metricName + '{'
-          + 'name="' + apiname + '"'
-          + ',path="' + name + '"'
-          + ',method="' + method + '"'
-          + ',code="' + code + '"'
-
-          + '} ' + count + "\n";
-        answer += statLine
-      }
-    }
-  }
-  return answer;
 }
 
 /**
