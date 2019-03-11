@@ -12,6 +12,7 @@ const debugF = require('debug');
 
 var debug = {
   log: debugF('microservice-metrics:log'),
+  validate: debugF('microservice-metrics:validate'),
   debug: debugF('microservice-metrics:debug')
 };
 
@@ -59,11 +60,13 @@ function hookValidate(method, jsonData, requestDetails, callback) {
   }
 
   if (method == 'GET'){
+    debug.validate('get request %O', requestDetails)
     if(process.env.PUBLIC) {
       return callback(null)
     }
     if (requestDetails.headers['authorization']) {
       let auth = requestDetails.headers['authorization'].split(" " , 2)
+      debug.validate('get request %O %s ', auth, process.env.SECURE_KEY)
       if(auth[1] && auth[1] == process.env.SECURE_KEY) {
         return callback(null)
       }
