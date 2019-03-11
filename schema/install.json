@@ -1,5 +1,10 @@
 {
   "properties": {
+    "public": {
+      "type": "boolean",
+      "description": "IP or hostname of the server",
+      "default": false
+    },
     "hostname": {
       "type": "string",
       "description": "IP or hostname of the server",
