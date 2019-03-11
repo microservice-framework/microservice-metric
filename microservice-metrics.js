@@ -11,8 +11,8 @@ require('dotenv').config();
 const debugF = require('debug');
 
 var debug = {
-  log: debugF('microservice-metric:log'),
-  debug: debugF('microservice-metric:debug')
+  log: debugF('microservice-metrics:log'),
+  debug: debugF('microservice-metrics:debug')
 };
 
 
@@ -59,7 +59,16 @@ function hookValidate(method, jsonData, requestDetails, callback) {
   }
 
   if (method == 'GET'){
-    return callback(null)
+    if(process.env.PUBLIC) {
+      return callback(null)
+    }
+    if (requestDetails.headers['authorization']) {
+      let auth = requestDetails.headers['authorization'].split(" " , 2)
+      if(auth[1] && auth[1] == process.env.SECURE_KEY) {
+        return callback(null)
+      }
+    }
+    
   }
 
   return mservice.validate(method, jsonData, requestDetails, callback);
@@ -111,7 +120,6 @@ function getMetrics(jsonData, requestDetails, callback) {
   callback(null, {code: 200, answer: metricStorage})
 }
 
-
 /**
  * Process Metrics.
  */
@@ -129,6 +137,12 @@ function processMetrics(message) {
   }
   if (message.jsonData.headers['x-hook-type']) {
     metricName += ':' + message.jsonData.headers['x-hook-type']
+  }
+  if (message.jsonData.headers['x-hook-phase']) {
+    metricName += ':' + message.jsonData.headers['x-hook-phase']
+  }
+  if (message.jsonData.headers['x-hook-group']) {
+    metricName += ':' + message.jsonData.headers['x-hook-group']
   }
   if (!metricStorage[metricName]) {
     metricStorage[metricName] = {
