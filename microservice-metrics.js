@@ -69,6 +69,8 @@ function hookValidate(method, jsonData, requestDetails, callback) {
       debug.validate('get request %O %s ', auth, process.env.SECURE_KEY)
       if(auth[1] && auth[1] == process.env.SECURE_KEY) {
         return callback(null)
+      } else {
+        debug.validate('not equal %s %s ', auth[1], process.env.SECURE_KEY)
       }
     }
     
@@ -120,7 +122,9 @@ function hookInit(cluster, worker, address) {
  * SEARCH handler.
  */
 function getMetrics(jsonData, requestDetails, callback) {
-  callback(null, {code: 200, answer: metricStorage})
+  callback(null, {code: 200, answer: metricStorage, headers: {
+    'user-agent': requestDetails.headers['user-agent']
+  }})
 }
 
 /**
