@@ -54,26 +54,6 @@ var mserviceRegister = new MicroserviceRouterRegister({
   cluster: mControlCluster
 });
 
-
-// wait for 3 min and register metric responder
-/*setTimeout(function(){
-  var mserviceRegister = new MicroserviceRouterRegister({
-    server: {
-      url: process.env.ROUTER_URL,
-      secureKey: process.env.ROUTER_SECRET,
-      period: process.env.ROUTER_PERIOD,
-    },
-    route: {
-      type: 'handler',
-      path: [process.env.SELF_PATH],
-      url: process.env.SELF_URL,
-      secureKey: process.env.SECURE_KEY,
-      online: true,
-    },
-    cluster: mControlCluster
-  });
-}, START_HANDLER_TIMEOUT )*/
-
 var metricStorage = {}
 
 /**
@@ -147,7 +127,9 @@ function hookInit(cluster) {
         debug.debug('metricServer.search err %O %O', err, answer)
         return starHandler();
       }
-      metricStorage = answer
+      if(typeof answer == "object") {
+        metricStorage = answer
+      }
       starHandler();
     });
   });
