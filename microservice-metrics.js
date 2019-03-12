@@ -128,6 +128,7 @@ function hookInit(cluster) {
         return starHandler();
       }
       if(typeof answer == "object") {
+        debug.log('metricServer.search received %O', answer)
         metricStorage = answer
       }
       starHandler();
