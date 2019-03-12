@@ -13,6 +13,9 @@ const debugF = require('debug');
 var debug = {
   log: debugF('microservice-metrics:log'),
   validate: debugF('microservice-metrics:validate'),
+  metric: debugF('microservice-metrics:metric'),
+  init: debugF('microservice-metrics:init'),
+  handler: debugF('microservice-metrics:handler'),
   debug: debugF('microservice-metrics:debug')
 };
 
@@ -118,17 +121,19 @@ function hookInit(cluster) {
     });
   }
   clientViaRouter(process.env.SELF_PATH, function(err, metricServer) {
+    console.log('clientViaRouter',err, metricServer);
     if (err) {
-      debug.debug('clientViaRouter %s err %O', process.env.SELF_PATH, err)
+      debug.init('clientViaRouter %s err %O', process.env.SELF_PATH, err)
       return starHandler();
     }
     metricServer.search({}, function(err, answer){
+      console.log('search', err, answer);
       if(err) {
-        debug.debug('metricServer.search err %O %O', err, answer)
+        debug.init('metricServer.search err %O %O', err, answer)
         return starHandler();
       }
       if(typeof answer == "object") {
-        debug.log('metricServer.search received %O', answer)
+        debug.init('metricServer.search received %O', answer)
         metricStorage = answer
       }
       starHandler();
@@ -140,9 +145,12 @@ function hookInit(cluster) {
  * SEARCH handler.
  */
 function getMetrics(jsonData, requestDetails, callback) {
-  callback(null, {code: 200, answer: metricStorage, headers: {
-    'user-agent': requestDetails.headers['user-agent']
-  }})
+  debug.handler('metricStorage', metricStorage)
+  let headers = {}
+  if(requestDetails.headers['user-agent']) {
+    headers['user-agent'] = requestDetails.headers['user-agent']
+  }
+  callback(null, {code: 200, answer: metricStorage, headers: headers})
 }
 
 /**
@@ -202,7 +210,7 @@ function hookNOTIFY(jsonData, requestDetails, callback) {
   } catch (e) {
     return callback(e, null);
   }
-  debug.debug('data %O %O', jsonData, requestDetails)
+  debug.metric('data %O %O', jsonData, requestDetails)
   let message = {
     headers: requestDetails.headers,
     jsonData: jsonData 
