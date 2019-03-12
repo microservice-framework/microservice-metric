@@ -4,7 +4,7 @@ const framework = '@microservice-framework';
 const Cluster = require(framework + '/microservice-cluster');
 const Microservice = require(framework + '/microservice');
 const MicroserviceRouterRegister = require(framework + '/microservice-router-register').register;
-
+const clientViaRouter = require(framework + '/microservice-router-register').clientViaRouter;
 
 require('dotenv').config();
 
@@ -37,6 +37,42 @@ var mControlCluster = new Cluster({
     OPTIONS: mservice.options
   }
 });
+
+var mserviceRegister = new MicroserviceRouterRegister({
+  server: {
+    url: process.env.ROUTER_URL,
+    secureKey: process.env.ROUTER_SECRET,
+    period: process.env.ROUTER_PERIOD,
+  },
+  route: {
+    type: 'metric',
+    url: process.env.SELF_URL,
+    secureKey: process.env.SECURE_KEY,
+    online: true,
+    meta: true,
+  },
+  cluster: mControlCluster
+});
+
+
+// wait for 3 min and register metric responder
+/*setTimeout(function(){
+  var mserviceRegister = new MicroserviceRouterRegister({
+    server: {
+      url: process.env.ROUTER_URL,
+      secureKey: process.env.ROUTER_SECRET,
+      period: process.env.ROUTER_PERIOD,
+    },
+    route: {
+      type: 'handler',
+      path: [process.env.SELF_PATH],
+      url: process.env.SELF_URL,
+      secureKey: process.env.SECURE_KEY,
+      online: true,
+    },
+    cluster: mControlCluster
+  });
+}, START_HANDLER_TIMEOUT )*/
 
 var metricStorage = {}
 
@@ -80,26 +116,11 @@ function hookValidate(method, jsonData, requestDetails, callback) {
 }
 
 /**
- * Init Handler.
+ * Init Handler. Executed in each worker
  */
-function hookInit(cluster, worker, address) {
-  if (worker.id == 1) {
-    var mserviceRegister = new MicroserviceRouterRegister({
-      server: {
-        url: process.env.ROUTER_URL,
-        secureKey: process.env.ROUTER_SECRET,
-        period: process.env.ROUTER_PERIOD,
-      },
-      route: {
-        type: 'metric',
-        url: process.env.SELF_URL,
-        secureKey: process.env.SECURE_KEY,
-        online: true,
-        meta: true,
-      },
-      cluster: cluster
-    });
-    // register this one on 1 min+ later to have one min stats for sure.
+function hookInit(cluster) {
+  // load exists metrics if available.
+  let starHandler = function(){
     var mserviceRegister = new MicroserviceRouterRegister({
       server: {
         url: process.env.ROUTER_URL,
@@ -116,6 +137,20 @@ function hookInit(cluster, worker, address) {
       cluster: cluster
     });
   }
+  clientViaRouter(process.env.SELF_PATH, function(err, metricServer) {
+    if (err) {
+      debug.debug('clientViaRouter %s err %O', process.env.SELF_PATH, err)
+      return starHandler();
+    }
+    metricServer.search({}, function(err, answer){
+      if(err) {
+        debug.debug('metricServer.search err %O %O', err, answer)
+        return starHandler();
+      }
+      metricStorage = answer
+      starHandler();
+    });
+  });
 }
 
 /**
@@ -130,7 +165,10 @@ function getMetrics(jsonData, requestDetails, callback) {
 /**
  * Process Metrics.
  */
-function processMetrics(message) {
+function processMetrics(type, message) {
+  if(type !== 'metric') {
+    return
+  }
   let metricName = 'unknown';
   if (message.jsonData.route) {
     metricName = message.jsonData.route
@@ -186,6 +224,6 @@ function hookNOTIFY(jsonData, requestDetails, callback) {
     headers: requestDetails.headers,
     jsonData: jsonData 
   }
-  process.send(JSON.stringify(message));
+  mControlCluster.message('metric', message)
   callback(null, {code: 200, answer: {message: 'received'}})
 }

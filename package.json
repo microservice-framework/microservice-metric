@@ -21,10 +21,10 @@
   },
   "homepage": "https://github.com/microservice-framework/microservice-metrics#readme",
   "dependencies": {
-    "@microservice-framework/microservice": "^1.3.5",
+    "@microservice-framework/microservice": "github:microservice-framework/microservice#2.x",
     "@microservice-framework/microservice-client": "^1.3.0",
     "@microservice-framework/microservice-cluster": "github:microservice-framework/microservice-cluster#2.x",
-    "@microservice-framework/microservice-router-register": "^1.3.1",
+    "@microservice-framework/microservice-router-register": "github:microservice-framework/microservice-router-register#2.x",
     "debug": "^2.2.0",
     "dot": "^1.1.1",
     "dotenv": "^2.0.0",
