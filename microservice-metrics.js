@@ -207,10 +207,26 @@ function processMetrics(type, message) {
   }
 
   if (!metricStorage[metricName].methods[metricMethod][message.jsonData.code]) {
-    metricStorage[metricName].methods[metricMethod][message.jsonData.code] = 0
+    metricStorage[metricName].methods[metricMethod][message.jsonData.code] = {
+      counter: 0,
+      time: {
+        min: 0,
+        max: 0,
+        total: 0
+      }
+    }
   }
 
-  metricStorage[metricName].methods[metricMethod][message.jsonData.code]++
+  metricStorage[metricName].methods[metricMethod][message.jsonData.code].counter++
+  let time = message.jsonData.endTime - message.jsonData.startTime
+  if (time < metricStorage[metricName].methods[metricMethod][message.jsonData.code].min) {
+    metricStorage[metricName].methods[metricMethod][message.jsonData.code].min = time
+  }
+  if (time > metricStorage[metricName].methods[metricMethod][message.jsonData.code].max) {
+    metricStorage[metricName].methods[metricMethod][message.jsonData.code].max = time
+  }
+  metricStorage[metricName].methods[metricMethod][message.jsonData.code].total = +time
+
 
 }
 

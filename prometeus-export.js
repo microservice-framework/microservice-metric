@@ -8,7 +8,7 @@ var client = new MicroserviceClient({
 });
 
 let apiname = 'unknow'
-if(process.env.NAME) {
+if (process.env.NAME) {
   apiname = process.env.NAME 
 }
 
@@ -18,9 +18,9 @@ console.log('#TYPE ' + metricName + ' counter')
 
 client.search({ }, function(err, handlerResponse){
   //console.log(handlerResponse)
-  for(let name in handlerResponse) {
-    for(let method in handlerResponse[name].methods) {
-      for(let code in handlerResponse[name].methods[method]) {
+  for (let name in handlerResponse) {
+    for (let method in handlerResponse[name].methods) {
+      for (let code in handlerResponse[name].methods[method]) {
         let count = handlerResponse[name].methods[method][code]
         let statLine = metricName + '{'
           + 'name="' + apiname + '"'
