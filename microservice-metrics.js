@@ -101,7 +101,7 @@ function hookValidate(method, jsonData, requestDetails, callback) {
 /**
  * Init Handler. Executed in each worker
  */
-function hookInit(cluster) {
+function hookInit() {
   // load exists metrics if available.
   let starHandler = function(){
     var mserviceRegister = new MicroserviceRouterRegister({
@@ -117,7 +117,7 @@ function hookInit(cluster) {
         secureKey: process.env.SECURE_KEY,
         online: true,
       },
-      cluster: cluster
+      cluster: mControlCluster
     });
   }
   clientViaRouter(process.env.SELF_PATH, function(err, metricServer) {
