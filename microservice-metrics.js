@@ -219,13 +219,13 @@ function processMetrics(type, message) {
 
   metricStorage[metricName].methods[metricMethod][message.jsonData.code].counter++
   let time = message.jsonData.endTime - message.jsonData.startTime
-  if (time < metricStorage[metricName].methods[metricMethod][message.jsonData.code].min) {
-    metricStorage[metricName].methods[metricMethod][message.jsonData.code].min = time
+  if (time < metricStorage[metricName].methods[metricMethod][message.jsonData.code].time.min) {
+    metricStorage[metricName].methods[metricMethod][message.jsonData.code].time.min = time
   }
-  if (time > metricStorage[metricName].methods[metricMethod][message.jsonData.code].max) {
-    metricStorage[metricName].methods[metricMethod][message.jsonData.code].max = time
+  if (time > metricStorage[metricName].methods[metricMethod][message.jsonData.code].time.max) {
+    metricStorage[metricName].methods[metricMethod][message.jsonData.code].time.max = time
   }
-  metricStorage[metricName].methods[metricMethod][message.jsonData.code].total = +time
+  metricStorage[metricName].methods[metricMethod][message.jsonData.code].time.total = +time
 
 
 }
