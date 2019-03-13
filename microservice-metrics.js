@@ -80,13 +80,13 @@ function hookValidate(method, jsonData, requestDetails, callback) {
 
   if (method == 'GET'){
     debug.validate('get request %O', requestDetails)
-    if(process.env.PUBLIC) {
+    if (process.env.PUBLIC) {
       return callback(null)
     }
     if (requestDetails.headers['authorization']) {
       let auth = requestDetails.headers['authorization'].split(" " , 2)
       debug.validate('get request %O %s ', auth, process.env.SECURE_KEY)
-      if(auth[1] && auth[1] == process.env.SECURE_KEY) {
+      if (auth[1] && auth[1] == process.env.SECURE_KEY) {
         return callback(null)
       } else {
         debug.validate('not equal %s %s ', auth[1], process.env.SECURE_KEY)
@@ -129,11 +129,11 @@ function hookInit() {
       }
       metricServer.search({}, function(err, answer){
         console.log('search', err, answer);
-        if(err) {
+        if (err) {
           debug.init('metricServer.search err %O %O', err, answer)
           return starHandler();
         }
-        if(typeof answer == "object") {
+        if (typeof answer == "object") {
           debug.init('metricServer.search received %O', answer)
           mergeMetrics(metricStorage, answer)
         }
@@ -145,12 +145,12 @@ function hookInit() {
 }
 
 function mergeMetrics(target, newMetrics) {
-  for(let i in newMetrics) {
-    if(!target[i]) {
+  for (let i in newMetrics) {
+    if (!target[i]) {
       target[i] = newMetrics[i]
       continue;
     } 
-    if( typeof target[i] == "object") {
+    if ( typeof target[i] == "object") {
       mergeMetrics(target[i], newMetrics[i])
       continue
     }
@@ -164,7 +164,7 @@ function mergeMetrics(target, newMetrics) {
 function getMetrics(jsonData, requestDetails, callback) {
   debug.handler('metricStorage', metricStorage)
   let headers = {}
-  if(requestDetails.headers['user-agent']) {
+  if (requestDetails.headers['user-agent']) {
     headers['user-agent'] = requestDetails.headers['user-agent']
   }
   callback(null, {code: 200, answer: metricStorage, headers: headers})
@@ -174,14 +174,14 @@ function getMetrics(jsonData, requestDetails, callback) {
  * Process Metrics.
  */
 function processMetrics(type, message) {
-  if(type !== 'metric') {
+  if (type !== 'metric') {
     return
   }
   let metricName = 'unknown';
   if (message.jsonData.route) {
     metricName = message.jsonData.route
   }
-  for(let name in message.jsonData.headers) {
+  for (let name in message.jsonData.headers) {
     if (name.substr(0, 4) == 'mfw-') {
       let pathname = name.substr(4)
       let value = message.jsonData.headers[name]
