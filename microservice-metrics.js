@@ -32,6 +32,7 @@ var mControlCluster = new Cluster({
   count: process.env.WORKERS,
   callbacks: {
     init: hookInit,
+    shutdown: hookShutdown,
     validate: hookValidate,
     NOTIFY: hookNOTIFY,
     GET: getMetrics,
@@ -58,6 +59,7 @@ var mserviceRegister = new MicroserviceRouterRegister({
 });
 
 var metricStorage = {}
+var metricStorageReport = {}
 
 /**
  * Validate handler.
@@ -99,10 +101,29 @@ function hookValidate(method, jsonData, requestDetails, callback) {
 }
 
 /**
+ * Shutdown Handler. Executed in each worker
+ */
+function hookShutdown(timers){
+  if (timers.intervalReset) {
+    clearInterval(timers.intervalReset)
+  }
+  if (timers.startTimer) {
+    clearTimeout(timers.startTimer)
+  }
+}
+/**
  * Init Handler. Executed in each worker
  */
-function hookInit() {
-  // load exists metrics if available.
+function hookInit(callback) {
+  let timers = {}
+  timers.intervalReset = setInterval(function(){
+    let metricStorageCopy = metricStorage
+    metricStorage = {}
+    metricStorageReport = metricStorageCopy
+
+  }, 60000) // drop report once in a minute ad reset storage
+  
+  // register handler
   let starHandler = function(){
     var mserviceRegister = new MicroserviceRouterRegister({
       server: {
@@ -120,54 +141,29 @@ function hookInit() {
       cluster: mControlCluster
     });
   }
-  setTimeout(function(){
-    clientViaRouter(process.env.SELF_PATH, function(err, metricServer) {
-      console.log('clientViaRouter',err, metricServer);
-      if (err) {
-        debug.init('clientViaRouter %s err %O', process.env.SELF_PATH, err)
-        return starHandler();
-      }
-      metricServer.search({}, function(err, answer){
-        console.log('search', err, answer);
-        if (err) {
-          debug.init('metricServer.search err %O %O', err, answer)
-          return starHandler();
-        }
-        if (typeof answer == "object") {
-          debug.init('metricServer.search received %O', answer)
-          mergeMetrics(metricStorage, answer)
-        }
-        starHandler();
-      });
-    });
+  timers.startTimer = setTimeout(function(){
+    starHandler();
   }, 60000) // set timeout for one minute due to limitations of router
   
+  callback(timers)
 }
 
-function mergeMetrics(target, newMetrics) {
-  for (let i in newMetrics) {
-    if (!target[i]) {
-      target[i] = newMetrics[i]
-      continue;
-    } 
-    if ( typeof target[i] == "object") {
-      mergeMetrics(target[i], newMetrics[i])
-      continue
-    }
-    target[i] += newMetrics[i]
-  }
-}
 
 /**
  * SEARCH handler.
  */
 function getMetrics(jsonData, requestDetails, callback) {
-  debug.handler('metricStorage', metricStorage)
+  debug.handler('metricStorage', metricStorageReport)
   let headers = {}
   if (requestDetails.headers['user-agent']) {
     headers['user-agent'] = requestDetails.headers['user-agent']
   }
-  callback(null, {code: 200, answer: metricStorage, headers: headers})
+
+  if (!Object.keys(metricStorageReport).length) {
+    callback(null, {code: 404, answer: { message: "no data collected yet"}, headers: headers})
+  }
+  
+  callback(null, {code: 200, answer: metricStorageReport, headers: headers})
 }
 
 /**
