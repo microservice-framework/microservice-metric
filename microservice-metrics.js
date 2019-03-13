@@ -120,25 +120,42 @@ function hookInit() {
       cluster: mControlCluster
     });
   }
-  clientViaRouter(process.env.SELF_PATH, function(err, metricServer) {
-    console.log('clientViaRouter',err, metricServer);
-    if (err) {
-      debug.init('clientViaRouter %s err %O', process.env.SELF_PATH, err)
-      return starHandler();
-    }
-    metricServer.search({}, function(err, answer){
-      console.log('search', err, answer);
-      if(err) {
-        debug.init('metricServer.search err %O %O', err, answer)
+  setTimeout(function(){
+    clientViaRouter(process.env.SELF_PATH, function(err, metricServer) {
+      console.log('clientViaRouter',err, metricServer);
+      if (err) {
+        debug.init('clientViaRouter %s err %O', process.env.SELF_PATH, err)
         return starHandler();
       }
-      if(typeof answer == "object") {
-        debug.init('metricServer.search received %O', answer)
-        metricStorage = answer
-      }
-      starHandler();
+      metricServer.search({}, function(err, answer){
+        console.log('search', err, answer);
+        if(err) {
+          debug.init('metricServer.search err %O %O', err, answer)
+          return starHandler();
+        }
+        if(typeof answer == "object") {
+          debug.init('metricServer.search received %O', answer)
+          mergeMetrics(metricStorage, answer)
+        }
+        starHandler();
+      });
     });
-  });
+  }, 60000) // set timeout for one minute due to limitations of router
+  
+}
+
+function mergeMetrics(target, newMetrics) {
+  for(let i in newMetrics) {
+    if(!target[i]) {
+      target[i] = newMetrics[i]
+      continue;
+    } 
+    if( typeof target[i] == "object") {
+      mergeMetrics(target[i], newMetrics[i])
+      continue
+    }
+    target[i] += newMetrics[i]
+  }
 }
 
 /**
